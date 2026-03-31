@@ -9,6 +9,30 @@
   *{margin:0;padding:0;box-sizing:border-box;}
   html{zoom:1.25;}
   body{background:#0a0a0a;color:#00ff88;font-family:'Share Tech Mono',monospace;overflow:hidden;height:100vh;user-select:none;}
+
+  /* ============ LOGIN SCREEN ============ */
+  .login-screen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:#0a0a0a;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+  .login-screen .login-scanline{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,0.015) 2px,rgba(0,255,136,0.015) 4px);}
+  .login-screen .login-box{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px;padding:40px 50px;background:#0d1a0d;border:1px solid #003322;border-radius:6px;box-shadow:0 0 60px rgba(0,255,136,0.05),0 0 120px rgba(0,0,0,0.5);max-width:420px;width:100%;}
+  .login-screen .login-badge{width:100px;height:100px;border-radius:50%;border:3px solid #00ff88;display:flex;align-items:center;justify-content:center;background:rgba(0,255,136,0.03);box-shadow:0 0 30px rgba(0,255,136,0.1);overflow:hidden;}
+  .login-screen .login-badge img{width:100%;height:100%;object-fit:cover;}
+  .login-screen .login-title{text-align:center;}
+  .login-screen .login-title h2{font-size:14px;letter-spacing:4px;color:#00ff88;margin-bottom:4px;}
+  .login-screen .login-title .login-sub{font-size:9px;color:#006644;letter-spacing:2px;}
+  .login-screen .login-fields{width:100%;display:flex;flex-direction:column;gap:10px;}
+  .login-screen .login-field{display:flex;flex-direction:column;gap:3px;}
+  .login-screen .login-field label{font-size:8px;color:#004d2a;letter-spacing:2px;}
+  .login-screen .login-field input{background:#050f0a;border:1px solid #003322;color:#00ff88;padding:8px 12px;font-family:inherit;font-size:12px;border-radius:3px;outline:none;letter-spacing:1px;}
+  .login-screen .login-field input:focus{border-color:#00ff88;box-shadow:0 0 8px rgba(0,255,136,0.15);}
+  .login-screen .login-field input[readonly]{color:#006644;cursor:default;}
+  .login-screen .login-btn{width:100%;padding:10px;background:#0a2a1a;border:1px solid #003322;color:#00ff88;font-family:inherit;font-size:11px;letter-spacing:3px;cursor:pointer;border-radius:3px;transition:all 0.2s;margin-top:6px;}
+  .login-screen .login-btn:hover{background:#0d3d2a;border-color:#00ff88;box-shadow:0 0 12px rgba(0,255,136,0.2);}
+  .login-screen .login-error{font-size:9px;color:#ff4444;letter-spacing:1px;height:14px;text-align:center;}
+  .login-screen .login-footer{font-size:7px;color:#003322;letter-spacing:1px;text-align:center;line-height:1.6;}
+  .login-screen.logging-in .login-box{animation:login-fade 0.8s ease-in forwards;}
+  @keyframes login-fade{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(0.97)}}
+  .login-screen.dismissed{animation:login-dismiss 0.5s ease-in forwards;pointer-events:none;}
+  @keyframes login-dismiss{0%{opacity:1}100%{opacity:0}}
   .scanline{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,136,0.015) 2px,rgba(0,255,136,0.015) 4px);}
   .top-bar{background:linear-gradient(180deg,#1a2a1a,#0d1a0d);border-bottom:2px solid #00ff88;padding:6px 16px;display:flex;align-items:center;justify-content:space-between;}
   .top-bar .logo{display:flex;align-items:center;gap:12px;}
@@ -320,6 +344,43 @@
 </style>
 </head>
 <body>
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-scanline"></div>
+  <div class="login-box">
+    <div class="login-badge"><img src="photos/badge.png" alt="PBSO Badge"></div>
+    <div class="login-title">
+      <h2>PBSO MDT LOGIN</h2>
+      <div class="login-sub">PALM BEACH COUNTY SHERIFF'S OFFICE</div>
+      <div class="login-sub">MOBILE DATA TERMINAL — SECURE ACCESS</div>
+    </div>
+    <div class="login-fields">
+      <div class="login-field">
+        <label>OFFICER NAME</label>
+        <input type="text" value="TYBURA, JACEK" readonly>
+      </div>
+      <div class="login-field">
+        <label>BADGE NUMBER</label>
+        <input type="text" value="JT131069" readonly>
+      </div>
+      <div class="login-field">
+        <label>UNIT ASSIGNMENT</label>
+        <input type="text" value="PBSO-PATROL-7 / DIST 7" readonly>
+      </div>
+      <div class="login-field">
+        <label>PASSWORD</label>
+        <input type="password" id="loginPassword" placeholder="Enter password..." autofocus>
+      </div>
+    </div>
+    <div class="login-error" id="loginError"></div>
+    <button class="login-btn" id="loginBtn">▶ LOG IN TO MDT</button>
+    <div class="login-footer">
+      AUTHORIZED PERSONNEL ONLY — UNAUTHORIZED ACCESS IS A VIOLATION OF F.S. 815<br>
+      ALL ACTIVITY IS MONITORED AND LOGGED — NCIC/FCIC CONNECTED
+    </div>
+  </div>
+</div>
+
 <div class="scanline"></div>
 
 <div class="top-bar">
@@ -1018,6 +1079,44 @@
 </div>
 
 <script>
+// ============================================================
+//  LOGIN SCREEN
+// ============================================================
+(function(){
+  const screen = document.getElementById('loginScreen');
+  const passInput = document.getElementById('loginPassword');
+  const btn = document.getElementById('loginBtn');
+  const errorEl = document.getElementById('loginError');
+  const CORRECT = '131069';
+
+  function attemptLogin(){
+    const val = passInput.value.trim();
+    if(!val){
+      errorEl.textContent = '▸ ENTER PASSWORD TO CONTINUE';
+      passInput.focus();
+      return;
+    }
+    if(val !== CORRECT){
+      errorEl.textContent = '▸ ACCESS DENIED — INVALID CREDENTIALS';
+      passInput.value = '';
+      passInput.focus();
+      return;
+    }
+    // Success
+    errorEl.textContent = '';
+    screen.classList.add('logging-in');
+    setTimeout(()=>{
+      screen.classList.add('dismissed');
+      setTimeout(()=> screen.remove(), 500);
+    }, 800);
+  }
+
+  btn.addEventListener('click', attemptLogin);
+  passInput.addEventListener('keydown', function(e){
+    if(e.key === 'Enter') attemptLogin();
+  });
+})();
+
 // ============================================================
 //  CRIMINAL DATABASE — EDIT NAMES, DETAILS, PHOTOS BELOW
 // ============================================================
