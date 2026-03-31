@@ -405,6 +405,8 @@
   <div class="tab">◉ BODYCAM</div>
   <div class="tab">⛯ CITY CAM <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite;vertical-align:middle;margin-left:4px;"></span></div>
   <div class="tab">⚙ SYSTEM</div>
+  <div style="flex:1;"></div>
+  <div class="tab" id="logoutBtn" style="color:#ff4444;border-right:none;border-left:1px solid #003322;">⏻ LOG OUT</div>
 </div>
 
 <div class="main">
@@ -1114,6 +1116,11 @@
   btn.addEventListener('click', attemptLogin);
   passInput.addEventListener('keydown', function(e){
     if(e.key === 'Enter') attemptLogin();
+  });
+
+  // Logout button
+  document.getElementById('logoutBtn').addEventListener('click', function(){
+    location.reload();
   });
 })();
 
