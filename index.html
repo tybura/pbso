@@ -20,7 +20,7 @@
   .nav-tabs .tab{padding:8px 18px;font-size:11px;letter-spacing:1px;color:#006644;cursor:pointer;border-right:1px solid #003322;transition:all 0.2s;font-family:inherit;}
   .nav-tabs .tab.active{color:#00ff88;background:#0a2a1a;border-bottom:2px solid #00ff88;text-shadow:0 0 8px rgba(0,255,136,0.4);}
   .nav-tabs .tab:hover{color:#00cc77;background:#0a1f14;}
-  .main{display:flex;height:calc(100vh - 90px);padding-bottom:28px;}
+  .main{display:flex;height:calc(100vh - 90px);padding-bottom:50px;}
   .sidebar{width:270px;min-width:270px;background:#0d1a0d;border-right:1px solid #003322;display:flex;flex-direction:column;overflow:hidden;}
   .sidebar-hdr{padding:10px 12px;font-size:11px;letter-spacing:2px;color:#00aa66;border-bottom:1px solid #003322;display:flex;justify-content:space-between;align-items:center;}
   .sidebar-hdr .count{background:#ff3333;color:#fff;font-size:9px;padding:2px 7px;border-radius:8px;}
@@ -78,7 +78,7 @@
   .custody-badge{display:inline-block;background:#ffaa00;color:#000;font-size:9px;font-weight:700;padding:3px 10px;border-radius:2px;letter-spacing:2px;margin-left:10px;}
   .probation-badge{display:inline-block;background:#4488ff;color:#fff;font-size:9px;font-weight:700;padding:3px 10px;border-radius:2px;letter-spacing:2px;margin-left:10px;}
   .cleared-badge{display:inline-block;background:#00ff88;color:#000;font-size:9px;font-weight:700;padding:3px 10px;border-radius:2px;letter-spacing:2px;margin-left:10px;}
-  .bottom-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,#0d1a0d,#1a2a1a);border-top:2px solid #003322;padding:6px 16px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#006644;z-index:100;}
+  .bottom-bar{position:fixed;bottom:0;left:0;right:0;height:28px;background:linear-gradient(180deg,#0d1a0d,#1a2a1a);border-top:2px solid #003322;padding:0 16px;display:flex;justify-content:space-between;align-items:center;font-size:10px;color:#006644;z-index:100;}
   .bottom-bar .status-lights{display:flex;gap:14px;}
   .light{display:flex;align-items:center;gap:5px;}
   .light .dot{width:7px;height:7px;border-radius:50%;}
@@ -105,6 +105,17 @@
   .radio-player .vol-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:10px;height:10px;background:#00ff88;border-radius:50%;cursor:pointer;box-shadow:0 0 4px rgba(0,255,136,0.5);}
   .radio-player .vol-slider::-moz-range-thumb{width:10px;height:10px;background:#00ff88;border-radius:50%;cursor:pointer;border:none;box-shadow:0 0 4px rgba(0,255,136,0.5);}
   .radio-player .radio-dot{width:5px;height:5px;border-radius:50%;background:#00ff88;box-shadow:0 0 4px #00ff88;animation:pulse 1.5s infinite;}
+
+  /* ============ NEWS TICKER ============ */
+  .news-ticker{position:fixed;bottom:28px;left:0;right:0;height:22px;background:#0a1a0d;border-top:1px solid #003322;border-bottom:1px solid #003322;overflow:hidden;z-index:100;display:flex;align-items:center;}
+  .news-ticker .ticker-label{flex-shrink:0;padding:0 10px;font-size:8px;letter-spacing:2px;color:#ff4444;background:#0d0a0a;border-right:1px solid #003322;height:100%;display:flex;align-items:center;gap:5px;}
+  .news-ticker .ticker-dot{width:4px;height:4px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite;}
+  .news-ticker .ticker-track{flex:1;overflow:hidden;position:relative;height:100%;display:flex;align-items:center;}
+  .news-ticker .ticker-content{display:flex;align-items:center;white-space:nowrap;animation:ticker-scroll 120s linear infinite;position:absolute;left:0;}
+  .news-ticker .ticker-item{font-size:9px;color:#00aa66;letter-spacing:0.5px;padding:0 30px;display:inline-flex;align-items:center;gap:8px;}
+  .news-ticker .ticker-item .ticker-sep{color:#003322;font-size:12px;}
+  .news-ticker .ticker-item .ticker-time{color:#004d2a;font-size:8px;}
+  @keyframes ticker-scroll{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
   /* ============ DISPATCH MAP ============ */
   .dispatch-map-wrap{display:none;height:100%;width:100%;position:relative;background:#060e0a;overflow:hidden;}
@@ -986,6 +997,12 @@
     <button class="btn-play" id="btnPlay" title="Play/Pause">▶</button>
     <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="40" title="Volume">
   </div>
+</div>
+
+<!-- NEWS TICKER -->
+<div class="news-ticker">
+  <div class="ticker-label"><span class="ticker-dot"></span> BREAKING</div>
+  <div class="ticker-track"><div class="ticker-content" id="tickerContent"></div></div>
 </div>
 
 <div class="bottom-bar">
@@ -2085,6 +2102,90 @@ function startDispatchMap() {
     mapCoords.textContent = lat + '\u00B0N  ' + lon + '\u00B0W';
   });
 }
+
+// ============================================================
+//  NEWS TICKER — Florida local news via RSS
+// ============================================================
+(function(){
+  const tickerEl = document.getElementById('tickerContent');
+
+  // Fallback headlines in case RSS fails
+  const fallbackHeadlines = [
+    "PBSO: Man arrested after high-speed chase on I-95 through Palm Beach County",
+    "Two injured in shooting near Okeechobee Blvd, suspect at large",
+    "WPB police investigate armed robbery at gas station on Southern Blvd",
+    "Florida Highway Patrol reports multi-vehicle crash on Florida Turnpike near Lake Worth",
+    "Drug trafficking ring busted in Riviera Beach — 8 arrested, $2M in narcotics seized",
+    "Missing person alert: 17-year-old last seen near Clematis Street, West Palm Beach",
+    "PBSO deputies respond to domestic disturbance call in Royal Palm Beach",
+    "Hit-and-run on Congress Ave leaves pedestrian in critical condition",
+    "Palm Beach County Sheriff warns of increase in vehicle break-ins",
+    "Lantana man charged with aggravated assault after neighborhood dispute turns violent",
+    "FBI joins investigation into series of bank robberies across South Florida",
+    "Boynton Beach police arrest suspect in connection with string of home invasions",
+    "Florida man arrested for DUI after driving golf cart on I-95",
+    "SWAT standoff in Greenacres ends peacefully after 6-hour negotiation",
+    "Lake Worth Beach residents report gunshots near downtown area overnight",
+    "Amber Alert issued for 4-year-old girl taken from West Palm Beach daycare",
+    "PBSO: Stolen vehicle pursuit ends in crash near Forest Hill Blvd",
+    "Palm Beach Gardens police investigate suspicious package at PGA Commons",
+    "Three arrested in Jupiter for operating illegal gambling operation",
+    "Wellington man facing federal charges for wire fraud scheme totaling $1.2M",
+  ];
+
+  function buildTicker(headlines) {
+    // Duplicate for seamless loop
+    const items = headlines.concat(headlines);
+    tickerEl.innerHTML = items.map(h =>
+      '<span class="ticker-item"><span class="ticker-sep">◆</span>' + h + '</span>'
+    ).join('');
+    // Adjust animation speed based on content width
+    requestAnimationFrame(() => {
+      const w = tickerEl.scrollWidth / 2;
+      const speed = Math.max(60, w / 80); // ~80px/sec
+      tickerEl.style.animationDuration = speed + 's';
+    });
+  }
+
+  // Try to fetch real headlines from WPTV via rss2json
+  const feeds = [
+    'https://www.wptv.com/news/crime.rss',
+    'https://www.wptv.com/news/local-news.rss'
+  ];
+  const apiBase = 'https://api.rss2json.com/v1/api.json?rss_url=';
+  let allHeadlines = [];
+  let fetched = 0;
+
+  feeds.forEach(feed => {
+    fetch(apiBase + encodeURIComponent(feed))
+      .then(r => r.json())
+      .then(data => {
+        if (data.status === 'ok' && data.items) {
+          data.items.forEach(item => {
+            if (item.title && item.title.length > 10) {
+              allHeadlines.push(item.title.toUpperCase());
+            }
+          });
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        fetched++;
+        if (fetched === feeds.length) {
+          if (allHeadlines.length >= 5) {
+            // Shuffle and take up to 20
+            allHeadlines.sort(() => Math.random() - 0.5);
+            buildTicker(allHeadlines.slice(0, 20));
+          } else {
+            buildTicker(fallbackHeadlines);
+          }
+        }
+      });
+  });
+
+  // Show fallback immediately, replace if RSS loads
+  buildTicker(fallbackHeadlines);
+})();
 
 // ============================================================
 //  MINI MAP — runs on homepage, independent incident system
