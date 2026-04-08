@@ -115,7 +115,7 @@
   .no-select.visible{display:flex;align-items:center;justify-content:center;height:60vh;color:#003322;font-size:14px;text-align:center;flex-direction:column;gap:10px;}
 
   /* Radio Player */
-  .radio-player{position:fixed;bottom:36px;right:16px;z-index:200;background:linear-gradient(180deg,#0d1a0d,#0a1208);border:1px solid #004d2a;border-radius:6px;padding:8px 12px;display:flex;align-items:center;gap:10px;box-shadow:0 0 20px rgba(0,255,136,0.08),inset 0 0 20px rgba(0,0,0,0.4);min-width:240px;}
+  .radio-player{display:flex;align-items:center;gap:10px;min-width:240px;}
   .radio-player .freq-display{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:60px;}
   .radio-player .freq-num{font-size:13px;color:#00ff88;text-shadow:0 0 8px rgba(0,255,136,0.5);letter-spacing:1px;font-family:'Share Tech Mono',monospace;}
   .radio-player .freq-label{font-size:7px;color:#006644;letter-spacing:2px;text-transform:uppercase;}
@@ -200,14 +200,7 @@
   /* Coordinate readout */
   .map-coords{position:absolute;top:10px;right:16px;z-index:20;font-size:10px;color:#004d2a;letter-spacing:1px;pointer-events:none;}
 
-  /* ============ MINI MAP (fixed floating) ============ */
-  .mini-map-wrap{position:fixed;bottom:36px;left:16px;z-index:200;width:220px;height:140px;background:#060e0a;border:1px solid #003322;border-radius:4px;cursor:pointer;overflow:hidden;box-shadow:0 0 20px rgba(0,0,0,0.5);}
-  .mini-map-wrap .mini-hdr{position:absolute;top:0;left:0;right:0;z-index:2;padding:4px 8px;background:linear-gradient(180deg,rgba(6,14,10,0.95),transparent);display:flex;justify-content:space-between;align-items:center;}
-  .mini-map-wrap .mini-hdr .mini-title{font-size:7px;letter-spacing:2px;color:#00aa66;}
-  .mini-map-wrap .mini-hdr .mini-live{font-size:6px;color:#ff4444;display:flex;align-items:center;gap:3px;}
-  .mini-map-wrap .mini-hdr .mini-live-dot{width:4px;height:4px;border-radius:50%;background:#ff4444;animation:pulse 1.5s infinite;}
-  .mini-map-wrap svg{width:100%;height:100%;display:block;}
-  .mini-map-wrap .mini-overlay{position:absolute;bottom:0;left:0;right:0;padding:3px 8px;background:linear-gradient(transparent,rgba(6,14,10,0.85));font-size:6px;color:#004d2a;letter-spacing:1px;text-align:center;z-index:2;}
+
 
   /* ============ BODYCAM VIEW ============ */
   .bodycam-wrap{display:none;height:100%;width:100%;background:#060e0a;overflow:hidden;}
@@ -291,7 +284,9 @@
   .system-hdr .sys-title{font-size:11px;letter-spacing:2px;color:#00aa66;}
   .system-hdr .sys-title span{color:#00ff88;}
   .system-hdr .sys-ver{font-size:9px;color:#006644;}
-  .system-body{flex:1;overflow-y:auto;padding:16px;display:flex;gap:16px;}
+  .system-body{flex:1;overflow-y:auto;padding:16px;display:flex;flex-wrap:wrap;gap:16px;min-height:0;}
+  .system-body::-webkit-scrollbar{width:5px;}
+  .system-body::-webkit-scrollbar-thumb{background:#003322;border-radius:3px;}
   .system-body::-webkit-scrollbar{width:5px;}
   .system-body::-webkit-scrollbar-thumb{background:#003322;border-radius:3px;}
   .sys-col{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;}
@@ -325,9 +320,11 @@
   .pbsonews-hdr .pn-title{font-size:11px;letter-spacing:2px;color:#00aa66;}
   .pbsonews-hdr .pn-title span{color:#00ff88;}
   .pbsonews-hdr .pn-meta{font-size:9px;color:#006644;display:flex;align-items:center;gap:14px;}
-  .pbsonews-body{flex:1;display:flex;align-items:stretch;justify-content:center;overflow:hidden;padding:0;min-height:0;}
-  .pbsonews-body .fb-embed{width:100%;height:100%;display:flex;align-items:stretch;justify-content:center;}
-  .pbsonews-body .fb-embed iframe{border:none;border-left:1px solid #003322;border-right:1px solid #003322;width:100%;height:100%;}
+  .pbsonews-body{flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:16px;min-height:0;}
+  .pbsonews-body::-webkit-scrollbar{width:5px;}
+  .pbsonews-body::-webkit-scrollbar-thumb{background:#003322;border-radius:3px;}
+  .pbsonews-body .fb-embed{width:100%;max-width:500px;height:100%;display:flex;flex-direction:column;align-items:center;}
+  .pbsonews-body .fb-embed iframe{border-radius:4px;border:1px solid #003322;flex:1;width:100%;}
 
   /* ============ CITY CAM VIEW ============ */
   .citycam-wrap{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:#060e0a;flex-direction:column;overflow:hidden;}
@@ -415,8 +412,8 @@
   <div class="tab">☎ DISPATCH</div>
   <div class="tab">◉ BODYCAM</div>
   <div class="tab">⛯ CITY CAM <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite;vertical-align:middle;margin-left:4px;"></span></div>
-  <div class="tab">⚙ SYSTEM</div>
   <div class="tab">✦ PBSO NEWS</div>
+  <div class="tab">⚙ SYSTEM</div>
   <div style="flex:1;"></div>
   <div class="tab" id="logoutBtn" style="color:#ff4444;border-right:none;border-left:1px solid #003322;">⏻ LOG OUT</div>
 </div>
@@ -491,6 +488,26 @@
       <div class="sys-ver">BUILD 4.7.2-STABLE &nbsp;|&nbsp; KERNEL 6.1.42-PBC &nbsp;|&nbsp; LAST UPDATE: 03/28/2026</div>
     </div>
     <div class="system-body">
+      <!-- RADIO PLAYER (inline in settings) -->
+      <div style="width:100%;flex-shrink:0;margin-bottom:12px;">
+        <div class="sys-panel">
+          <div class="sys-panel-hdr">▸ RADIO SCANNER</div>
+          <div class="sys-panel-body">
+            <div class="radio-player" id="radioPlayer" style="position:static;border:none;box-shadow:none;background:none;min-width:0;padding:0;">
+              <div class="radio-dot"></div>
+              <div class="freq-display">
+                <span class="freq-num" id="freqNum">154.680</span>
+                <span class="freq-label">PBSO CH-7</span>
+              </div>
+              <div class="wave-box" id="waveBox"></div>
+              <div class="controls">
+                <button class="btn-play" id="btnPlay" title="Play/Pause">▶</button>
+                <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="40" title="Volume">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- LEFT COLUMN -->
       <div class="sys-col">
         <div class="sys-panel">
@@ -543,8 +560,8 @@
             <div class="sys-row"><span class="sys-label">HIGH CONTRAST MODE</span><div class="sys-toggle on" data-toggle="contrast"><div class="sys-toggle-knob"></div></div></div>
             <div class="sys-row"><span class="sys-label">SHOW MAP COORDINATES</span><div class="sys-toggle on" data-toggle="coords"><div class="sys-toggle-knob"></div></div></div>
             <div class="sys-row"><span class="sys-label">INCIDENT TOAST ALERTS</span><div class="sys-toggle on" data-toggle="toasts"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">THEME</span><select class="sys-select"><option>TERMINAL GREEN</option><option>NIGHT BLUE</option><option>AMBER CLASSIC</option><option>HIGH-VIS WHITE</option></select></div>
-            <div class="sys-row"><span class="sys-label">FONT SIZE</span><select class="sys-select"><option>SMALL</option><option selected>MEDIUM</option><option>LARGE</option></select></div>
+            <div class="sys-row"><span class="sys-label">THEME</span><select class="sys-select" id="sysTheme"><option value="green">TERMINAL GREEN</option><option value="blue">NIGHT BLUE</option><option value="amber">AMBER CLASSIC</option></select></div>
+            <div class="sys-row"><span class="sys-label">FONT SIZE</span><select class="sys-select" id="sysFontSize"><option value="small">SMALL</option><option value="medium" selected>MEDIUM</option><option value="large">LARGE</option></select></div>
           </div>
         </div>
         <div class="sys-panel">
@@ -1026,67 +1043,7 @@
   </div>
 </div>
 
-<!-- Mini dispatch map preview (fixed floating) -->
-<div class="mini-map-wrap" id="miniMapWrap" title="Click to open Dispatch Map">
-  <div class="mini-hdr">
-    <span class="mini-title">DISPATCH MAP</span>
-    <span class="mini-live"><span class="mini-live-dot"></span> LIVE</span>
-  </div>
-  <svg id="miniMapSvg" viewBox="0 0 900 650" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <rect width="900" height="650" fill="#080f0b"/>
-    <path d="M718,0 L738,0 L742,160 L745,320 L742,480 L744,650 L718,650 L722,480 L720,320 L724,160 Z" fill="#0b1e16"/>
-    <path d="M745,0 L900,0 L900,650 L744,650 L748,480 L745,320 L748,160 Z" fill="#091912"/>
-    <path d="M670,230 Q700,250 700,330 Q695,390 670,400 Q655,380 655,310 Q658,250 670,230Z" fill="#0b1e16" opacity="0.7"/>
-    <g stroke="#0e2219" stroke-width="0.4" fill="none" opacity="0.35">
-      <path d="M30,25 L710,25"/><path d="M30,51 L710,51"/><path d="M30,103 L710,103"/>
-      <path d="M30,165 L710,165"/><path d="M30,191 L710,191"/><path d="M30,230 L710,230"/>
-      <path d="M30,265 L710,265"/><path d="M30,291 L710,291"/><path d="M30,323 L710,323"/>
-      <path d="M30,363 L710,363"/><path d="M30,403 L710,403"/><path d="M30,429 L710,429"/>
-      <path d="M30,465 L710,465"/><path d="M30,491 L710,491"/><path d="M30,523 L710,523"/>
-      <path d="M30,549 L710,549"/><path d="M30,583 L710,583"/><path d="M30,622 L710,622"/>
-      <path d="M45,0 L45,650"/><path d="M118,0 L118,650"/><path d="M195,0 L195,650"/>
-      <path d="M268,0 L268,650"/><path d="M335,0 L335,650"/><path d="M408,0 L408,650"/>
-      <path d="M478,0 L478,650"/><path d="M545,0 L545,650"/><path d="M598,0 L598,650"/>
-      <path d="M662,0 L662,650"/>
-    </g>
-    <g stroke="#112b1f" stroke-width="0.7" fill="none" opacity="0.45">
-      <path d="M180,0 L180,650"/><path d="M260,0 L260,650"/><path d="M400,0 L400,650"/>
-      <path d="M560,0 L560,650"/><path d="M660,0 L660,650"/>
-      <path d="M0,50 L720,50"/><path d="M0,180 L720,180"/><path d="M0,270 L720,270"/>
-      <path d="M0,340 L720,340"/><path d="M0,470 L720,470"/><path d="M0,530 L720,530"/>
-    </g>
-    <g stroke="#164030" stroke-width="1.5" fill="none" opacity="0.5">
-      <path d="M0,80 L720,80"/><path d="M0,140 L720,140"/><path d="M0,240 L720,240"/>
-      <path d="M0,300 L720,300"/><path d="M0,380 L720,380"/><path d="M0,440 L720,440"/>
-      <path d="M0,500 L720,500"/><path d="M0,560 L720,560"/>
-    </g>
-    <path d="M498,0 L498,650" stroke="#18503a" stroke-width="2.2" fill="none" opacity="0.55"/>
-    <path d="M318,0 L316,160 L318,320 L316,480 L318,650" stroke="#18503a" stroke-width="1.8" fill="none" opacity="0.5"/>
-    <path d="M620,0 L618,200 L620,400 L618,650" stroke="#164030" stroke-width="1.5" fill="none" opacity="0.45"/>
-    <g id="miniIncidentLayer"></g>
-    <g fill="#4488ff" opacity="0.6">
-      <circle cx="520" cy="280" r="4"/><circle cx="580" cy="350" r="4"/>
-      <circle cx="450" cy="190" r="4"/><circle cx="620" cy="440" r="4"/>
-      <circle cx="380" cy="310" r="4"/><circle cx="540" cy="520" r="4"/>
-      <circle cx="660" cy="160" r="4"/>
-    </g>
-  </svg>
-  <div class="mini-overlay">CLICK FOR FULL MAP</div>
-</div>
-
 <audio id="radioAudio" src="https://github.com/tybura/pbso/releases/download/v1.0/chatter.m4a" loop preload="auto"></audio>
-<div class="radio-player" id="radioPlayer">
-  <div class="radio-dot"></div>
-  <div class="freq-display">
-    <span class="freq-num" id="freqNum">154.680</span>
-    <span class="freq-label">PBSO CH-7</span>
-  </div>
-  <div class="wave-box" id="waveBox"></div>
-  <div class="controls">
-    <button class="btn-play" id="btnPlay" title="Play/Pause">▶</button>
-    <input type="range" class="vol-slider" id="volSlider" min="0" max="100" value="40" title="Volume">
-  </div>
-</div>
 
 <!-- NEWS TICKER -->
 <div class="news-ticker">
@@ -1706,14 +1663,12 @@ selectRecord(0);
   const systemWrap = document.getElementById('systemWrap');
   const pbsonewsWrap = document.getElementById('pbsonewsWrap');
   const citycamWrap = document.getElementById('citycamWrap');
-  const miniMapWrap = document.getElementById('miniMapWrap');
 
   const fullScreenViews = [dispatchWrap, bodycamWrap, warrantsWrap, vehiclesWrap, systemWrap, pbsonewsWrap, citycamWrap];
 
   function hideAllViews(){
     sidebar.style.display = '';
     contentArea.style.display = '';
-    miniMapWrap.style.display = '';
     fullScreenViews.forEach(v => { v.classList.remove('visible'); v.style.display = 'none'; });
     bodycamWrap.querySelectorAll('video').forEach(v => v.pause());
   }
@@ -1727,7 +1682,6 @@ selectRecord(0);
       if (label.includes('DISPATCH')) {
         sidebar.style.display = 'none';
         contentArea.style.display = 'none';
-        miniMapWrap.style.display = 'none';
         dispatchWrap.classList.add('visible');
         dispatchWrap.style.display = 'block';
         startDispatchMap();
@@ -1803,9 +1757,8 @@ function loadFbFeed(){
   if(fbFeedLoaded) return;
   fbFeedLoaded = true;
   const container = document.getElementById('fbEmbedContainer');
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-  container.innerHTML = '<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpalmbeachcountysheriff&tabs=timeline&width='+w+'&height='+h+'&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=true" style="width:100%;height:100%;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>';
+  const h = container.parentElement.clientHeight - 20;
+  container.innerHTML = '<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpalmbeachcountysheriff&tabs=timeline&width=500&height='+h+'&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false" width="500" height="'+h+'" style="border:none;overflow:hidden;border-radius:4px;border:1px solid #003322;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>';
 }
 
 // ============================================================
@@ -1824,16 +1777,89 @@ function loadFbFeed(){
 })();
 
 // ============================================================
-//  SYSTEM — TOGGLES & SESSION
+//  SYSTEM — FUNCTIONAL TOGGLES & SESSION
 // ============================================================
 (function(){
-  // Toggle switches
+  const scanlineEl = document.querySelector('.scanline');
+  const bodyEl = document.body;
+
+  // ---- FUNCTIONAL TOGGLE HANDLERS ----
+  const toggleHandlers = {
+    'scanline': function(on){ if(scanlineEl) scanlineEl.style.display = on ? '' : 'none'; },
+    'flicker': function(on){
+      if(on){
+        const style = document.createElement('style');
+        style.id = 'crt-flicker-style';
+        style.textContent = '@keyframes crt-flicker{0%{opacity:1}5%{opacity:0.95}10%{opacity:1}15%{opacity:0.98}100%{opacity:1}} body{animation:crt-flicker 0.15s infinite;}';
+        document.head.appendChild(style);
+      } else {
+        const s = document.getElementById('crt-flicker-style');
+        if(s) s.remove();
+        bodyEl.style.animation = '';
+      }
+    },
+    'contrast': function(on){
+      document.documentElement.style.filter = on ? 'contrast(1.15)' : '';
+    },
+    'coords': function(on){
+      const c = document.getElementById('mapCoords');
+      if(c) c.style.display = on ? '' : 'none';
+    }
+  };
+
   document.querySelectorAll('.sys-toggle').forEach(toggle => {
     toggle.addEventListener('click', function(){
       this.classList.toggle('on');
+      const key = this.dataset.toggle;
+      const isOn = this.classList.contains('on');
+      if(toggleHandlers[key]) toggleHandlers[key](isOn);
     });
   });
-  // Session login time
+
+  // Init: apply default states
+  document.querySelectorAll('.sys-toggle').forEach(toggle => {
+    const key = toggle.dataset.toggle;
+    const isOn = toggle.classList.contains('on');
+    if(toggleHandlers[key]) toggleHandlers[key](isOn);
+  });
+
+  // ---- THEME SWITCHER ----
+  const themes = {
+    green: { primary:'#00ff88', mid:'#00aa66', dim:'#006644', dark:'#004d2a', darkest:'#003322', bg:'#0a0a0a', panelBg:'#0d1a0d', barBg1:'#1a2a1a', barBg2:'#0d1a0d', border:'#003322', accent:'#00ff88', hue:'0' },
+    blue:  { primary:'#44aaff', mid:'#3388cc', dim:'#336699', dark:'#224466', darkest:'#1a3355', bg:'#080c14', panelBg:'#0d1420', barBg1:'#1a2433', barBg2:'#0d1420', border:'#1a3355', accent:'#44aaff', hue:'210' },
+    amber: { primary:'#ffaa00', mid:'#cc8800', dim:'#996600', dark:'#664400', darkest:'#443300', bg:'#0e0a04', panelBg:'#1a1408', barBg1:'#2a2010', barBg2:'#1a1408', border:'#443300', accent:'#ffaa00', hue:'40' }
+  };
+
+  const themeSelect = document.getElementById('sysTheme');
+  themeSelect.addEventListener('change', function(){
+    const t = themes[this.value];
+    if(!t) return;
+    const r = document.documentElement.style;
+    r.setProperty('--c-primary', t.primary);
+    r.setProperty('--c-mid', t.mid);
+    r.setProperty('--c-dim', t.dim);
+    r.setProperty('--c-dark', t.dark);
+    r.setProperty('--c-darkest', t.darkest);
+    bodyEl.style.background = t.bg;
+    bodyEl.style.color = t.primary;
+    // Apply hue rotation to the whole page for quick theme
+    document.documentElement.style.filter = document.documentElement.style.filter.replace(/hue-rotate\([^)]*\)/,'') + ' hue-rotate('+t.hue+'deg)';
+    // Remove any double spaces
+    document.documentElement.style.filter = document.documentElement.style.filter.replace(/\s+/g,' ').trim();
+    // If green (default), remove hue-rotate
+    if(t.hue === '0'){
+      document.documentElement.style.filter = document.documentElement.style.filter.replace(/hue-rotate\(0deg\)/,'').trim();
+    }
+  });
+
+  // ---- FONT SIZE ----
+  const fontSelect = document.getElementById('sysFontSize');
+  fontSelect.addEventListener('change', function(){
+    const sizes = { small: '1.1', medium: '1.25', large: '1.45' };
+    document.documentElement.style.zoom = sizes[this.value] || '1.25';
+  });
+
+  // ---- SESSION INFO ----
   const loginEl = document.getElementById('sysLoginTime');
   const uptimeEl = document.getElementById('sysUptime');
   const loginDate = new Date();
@@ -2187,7 +2213,7 @@ function startDispatchMap() {
     setTimeout(() => resolveIncident(incData), 10000);
 
     // Also feed to mini map if it exists
-    if (window.miniMapSpawn) window.miniMapSpawn(inc, loc);
+
   }
 
   function resolveIncident(incData) {
@@ -2339,99 +2365,7 @@ function startDispatchMap() {
   buildTicker(fallbackHeadlines);
 })();
 
-// ============================================================
-//  MINI MAP — runs on homepage, independent incident system
-// ============================================================
-(function(){
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const miniLayer = document.getElementById('miniIncidentLayer');
-  const miniWrap = document.getElementById('miniMapWrap');
-
-  // Click mini map to switch to DISPATCH tab
-  miniWrap.addEventListener('click', function(){
-    const tabs = document.querySelectorAll('.nav-tabs .tab');
-    for(let i=0;i<tabs.length;i++){
-      if(tabs[i].textContent.includes('DISPATCH')){ tabs[i].click(); break; }
-    }
-  });
-
-  const miniIncTypes = [
-    { color:'#ff4444', priority:'high' },
-    { color:'#ffaa00', priority:'med' },
-    { color:'#00ff88', priority:'low' },
-  ];
-
-  const miniLocs = [
-    {x:620,y:375},{x:500,y:295},{x:460,y:238},{x:640,y:280},{x:400,y:338},
-    {x:500,y:138},{x:620,y:78},{x:340,y:438},{x:500,y:498},{x:620,y:555},
-    {x:420,y:200},{x:380,y:360},{x:560,y:200},{x:560,y:260},{x:300,y:400},
-    {x:600,y:165},{x:260,y:300},{x:440,y:110},{x:440,y:495},{x:400,y:460},
-  ];
-
-  function spawnMiniDot(inc, loc) {
-    const jx = (Math.random()-0.5)*30;
-    const jy = (Math.random()-0.5)*20;
-    const x = (loc ? loc.x : miniLocs[Math.floor(Math.random()*miniLocs.length)].x) + jx;
-    const y = (loc ? loc.y : miniLocs[Math.floor(Math.random()*miniLocs.length)].y) + jy;
-    const incType = inc || miniIncTypes[Math.floor(Math.random()*miniIncTypes.length)];
-
-    const g = document.createElementNS(svgNS,'g');
-    g.setAttribute('transform',`translate(${x},${y})`);
-
-    // Pulse ring
-    const ring = document.createElementNS(svgNS,'circle');
-    ring.setAttribute('r','6');
-    ring.setAttribute('fill','none');
-    ring.setAttribute('stroke',incType.color);
-    ring.setAttribute('stroke-width','1.5');
-    ring.setAttribute('opacity','0.5');
-    ring.classList.add('inc-pulse');
-    g.appendChild(ring);
-
-    if(incType.priority === 'high' || incType.priority === 'med'){
-      const d = document.createElementNS(svgNS,'rect');
-      d.setAttribute('x','-4');d.setAttribute('y','-4');
-      d.setAttribute('width','8');d.setAttribute('height','8');
-      d.setAttribute('fill',incType.color);d.setAttribute('opacity','0.9');
-      d.setAttribute('transform','rotate(45)');d.setAttribute('rx','1');
-      g.appendChild(d);
-    } else {
-      const c = document.createElementNS(svgNS,'circle');
-      c.setAttribute('r','4');c.setAttribute('fill',incType.color);c.setAttribute('opacity','0.8');
-      g.appendChild(c);
-    }
-
-    miniLayer.appendChild(g);
-
-    // Remove after 10s
-    setTimeout(()=>{
-      g.style.animation='inc-fade-out 0.8s forwards';
-      setTimeout(()=>{ if(g.parentNode) g.remove(); },800);
-    },10000);
-  }
-
-  // Expose for full dispatch map to call
-  window.miniMapSpawn = function(inc, loc) {
-    spawnMiniDot({ color: inc.color, priority: inc.priority }, loc);
-  };
-
-  // Independent spawning for when dispatch map is not active
-  function miniSchedule(){
-    const delay = 3000 + Math.random()*6000;
-    setTimeout(()=>{
-      // Only self-spawn if dispatch map is NOT running (to avoid duplicates)
-      if(!window.dispatchMapStarted || !document.getElementById('dispatchMapWrap').classList.contains('visible')){
-        if(miniLayer.children.length < 6) spawnMiniDot();
-      }
-      miniSchedule();
-    },delay);
-  }
-
-  // Initial dots
-  setTimeout(()=>spawnMiniDot(),800);
-  setTimeout(()=>spawnMiniDot(),1800);
-  miniSchedule();
-})();
+// (Mini map removed)
 
 // ============================================================
 //  RADIO PLAYER — file:// compatible (no Web Audio API)
