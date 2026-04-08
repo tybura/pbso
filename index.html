@@ -318,6 +318,19 @@
   .sys-btn:hover{background:#0d3d2a;border-color:#00ff88;box-shadow:0 0 6px rgba(0,255,136,0.2);}
   .sys-select{background:#050f0a;border:1px solid #004d2a;color:#00ff88;padding:4px 8px;font-family:inherit;font-size:9px;border-radius:2px;outline:none;cursor:pointer;}
 
+  /* ============ PBSO NEWS VIEW ============ */
+  .pbsonews-wrap{display:none;height:100%;width:100%;background:#060e0a;flex-direction:column;overflow:hidden;}
+  .pbsonews-wrap.visible{display:flex;}
+  .pbsonews-hdr{padding:10px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #003322;flex-shrink:0;background:#0d1a0d;}
+  .pbsonews-hdr .pn-title{font-size:11px;letter-spacing:2px;color:#00aa66;}
+  .pbsonews-hdr .pn-title span{color:#00ff88;}
+  .pbsonews-hdr .pn-meta{font-size:9px;color:#006644;display:flex;align-items:center;gap:14px;}
+  .pbsonews-body{flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:16px;min-height:0;}
+  .pbsonews-body::-webkit-scrollbar{width:5px;}
+  .pbsonews-body::-webkit-scrollbar-thumb{background:#003322;border-radius:3px;}
+  .pbsonews-body .fb-embed{width:100%;max-width:500px;height:100%;display:flex;flex-direction:column;align-items:center;}
+  .pbsonews-body .fb-embed iframe{border-radius:4px;border:1px solid #003322;flex:1;width:100%;}
+
   /* ============ CITY CAM VIEW ============ */
   .citycam-wrap{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:#060e0a;flex-direction:column;overflow:hidden;}
   .citycam-wrap.visible{display:flex;}
@@ -405,6 +418,7 @@
   <div class="tab">◉ BODYCAM</div>
   <div class="tab">⛯ CITY CAM <span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite;vertical-align:middle;margin-left:4px;"></span></div>
   <div class="tab">⚙ SYSTEM</div>
+  <div class="tab">✦ PBSO NEWS</div>
   <div style="flex:1;"></div>
   <div class="tab" id="logoutBtn" style="color:#ff4444;border-right:none;border-left:1px solid #003322;">⏻ LOG OUT</div>
 </div>
@@ -455,6 +469,20 @@
         <thead><tr><th>UNIT</th><th>VEHICLE</th><th>TAG</th><th>OFFICER</th><th>STATUS</th><th>CURRENT LOCATION</th><th>LAST UPDATE</th></tr></thead>
         <tbody id="vehiclesBody"></tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- PBSO NEWS VIEW -->
+  <div class="pbsonews-wrap" id="pbsonewsWrap">
+    <div class="pbsonews-hdr">
+      <div class="pn-title"><span>PBSO NEWS FEED</span> &mdash; OFFICIAL FACEBOOK</div>
+      <div class="pn-meta">
+        <div>SOURCE: <span style="color:#00ff88;">PALM BEACH COUNTY SHERIFF'S OFFICE</span></div>
+        <div>STATUS: <span style="color:#00ff88;">LIVE</span></div>
+      </div>
+    </div>
+    <div class="pbsonews-body">
+      <div class="fb-embed" id="fbEmbedContainer"></div>
     </div>
   </div>
 
@@ -1678,10 +1706,11 @@ selectRecord(0);
   const warrantsWrap = document.getElementById('warrantsWrap');
   const vehiclesWrap = document.getElementById('vehiclesWrap');
   const systemWrap = document.getElementById('systemWrap');
+  const pbsonewsWrap = document.getElementById('pbsonewsWrap');
   const citycamWrap = document.getElementById('citycamWrap');
   const miniMapWrap = document.getElementById('miniMapWrap');
 
-  const fullScreenViews = [dispatchWrap, bodycamWrap, warrantsWrap, vehiclesWrap, systemWrap, citycamWrap];
+  const fullScreenViews = [dispatchWrap, bodycamWrap, warrantsWrap, vehiclesWrap, systemWrap, pbsonewsWrap, citycamWrap];
 
   function hideAllViews(){
     sidebar.style.display = '';
@@ -1729,6 +1758,12 @@ selectRecord(0);
         citycamWrap.querySelectorAll('iframe[data-src]').forEach(f => {
           if (!f.src || f.src === 'about:blank') f.src = f.dataset.src;
         });
+      } else if (label.includes('PBSO NEWS')) {
+        sidebar.style.display = 'none';
+        contentArea.style.display = 'none';
+        pbsonewsWrap.classList.add('visible');
+        pbsonewsWrap.style.display = 'flex';
+        loadFbFeed();
       } else if (label.includes('SYSTEM')) {
         sidebar.style.display = 'none';
         contentArea.style.display = 'none';
@@ -1761,6 +1796,18 @@ selectRecord(0);
   setInterval(updateBcTimestamps, 1000);
   updateBcTimestamps();
 })();
+
+// ============================================================
+//  PBSO NEWS — FACEBOOK PAGE EMBED
+// ============================================================
+let fbFeedLoaded = false;
+function loadFbFeed(){
+  if(fbFeedLoaded) return;
+  fbFeedLoaded = true;
+  const container = document.getElementById('fbEmbedContainer');
+  const h = container.parentElement.clientHeight - 20;
+  container.innerHTML = '<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpalmbeachcountysheriff&tabs=timeline&width=500&height='+h+'&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false" width="500" height="'+h+'" style="border:none;overflow:hidden;border-radius:4px;border:1px solid #003322;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>';
+}
 
 // ============================================================
 //  CITY CAM — LIVE TIMESTAMPS
