@@ -320,11 +320,12 @@
   .pbsonews-hdr .pn-title{font-size:11px;letter-spacing:2px;color:#00aa66;}
   .pbsonews-hdr .pn-title span{color:#00ff88;}
   .pbsonews-hdr .pn-meta{font-size:9px;color:#006644;display:flex;align-items:center;gap:14px;}
-  .pbsonews-body{flex:1;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:16px;min-height:0;}
-  .pbsonews-body::-webkit-scrollbar{width:5px;}
-  .pbsonews-body::-webkit-scrollbar-thumb{background:#003322;border-radius:3px;}
-  .pbsonews-body .fb-embed{width:100%;max-width:500px;height:100%;display:flex;flex-direction:column;align-items:center;}
-  .pbsonews-body .fb-embed iframe{border-radius:4px;border:1px solid #003322;flex:1;width:100%;}
+  .pbsonews-body{flex:1;display:flex;gap:16px;padding:16px;min-height:0;overflow:hidden;}
+  .pbsonews-col{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden;}
+  .pbsonews-col .pn-col-hdr{font-size:8px;letter-spacing:2px;color:#00aa66;padding:6px 10px;background:#0a1f14;border:1px solid #003322;border-bottom:none;border-radius:3px 3px 0 0;flex-shrink:0;display:flex;align-items:center;gap:6px;}
+  .pbsonews-col .pn-col-hdr .pn-icon{font-size:11px;}
+  .pbsonews-col .pn-col-body{flex:1;border:1px solid #003322;border-radius:0 0 3px 3px;overflow:hidden;background:#0d1a0d;}
+  .pbsonews-col .pn-col-body iframe{width:100%;height:100%;border:none;}
 
   /* ============ CITY CAM VIEW ============ */
   .citycam-wrap{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:#060e0a;flex-direction:column;overflow:hidden;}
@@ -470,14 +471,21 @@
   <!-- PBSO NEWS VIEW -->
   <div class="pbsonews-wrap" id="pbsonewsWrap">
     <div class="pbsonews-hdr">
-      <div class="pn-title"><span>PBSO NEWS FEED</span> &mdash; OFFICIAL FACEBOOK</div>
+      <div class="pn-title"><span>PBSO NEWS FEED</span> &mdash; OFFICIAL SOCIAL MEDIA</div>
       <div class="pn-meta">
         <div>SOURCE: <span style="color:#00ff88;">PALM BEACH COUNTY SHERIFF'S OFFICE</span></div>
-        <div>STATUS: <span style="color:#00ff88;">LIVE</span></div>
+        <div>FEEDS: <span style="color:#00ff88;">2 ACTIVE</span></div>
       </div>
     </div>
     <div class="pbsonews-body">
-      <div class="fb-embed" id="fbEmbedContainer"></div>
+      <div class="pbsonews-col">
+        <div class="pn-col-hdr"><span class="pn-icon">f</span> FACEBOOK — @palmbeachcountysheriff</div>
+        <div class="pn-col-body" id="fbEmbedContainer"></div>
+      </div>
+      <div class="pbsonews-col">
+        <div class="pn-col-hdr"><span class="pn-icon">⬡</span> INSTAGRAM — @pbcountysheriff</div>
+        <div class="pn-col-body" id="igEmbedContainer"></div>
+      </div>
     </div>
   </div>
 
@@ -1719,15 +1727,22 @@ selectRecord(0);
 })();
 
 // ============================================================
-//  PBSO NEWS — FACEBOOK PAGE EMBED
+//  PBSO NEWS — FACEBOOK + INSTAGRAM EMBEDS
 // ============================================================
-let fbFeedLoaded = false;
+let socialFeedLoaded = false;
 function loadFbFeed(){
-  if(fbFeedLoaded) return;
-  fbFeedLoaded = true;
-  const container = document.getElementById('fbEmbedContainer');
-  const h = container.parentElement.clientHeight - 20;
-  container.innerHTML = '<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpalmbeachcountysheriff&tabs=timeline&width=500&height='+h+'&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false" width="500" height="'+h+'" style="border:none;overflow:hidden;border-radius:4px;border:1px solid #003322;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>';
+  if(socialFeedLoaded) return;
+  socialFeedLoaded = true;
+
+  // Facebook
+  const fbContainer = document.getElementById('fbEmbedContainer');
+  const fbW = fbContainer.clientWidth;
+  const fbH = fbContainer.clientHeight;
+  fbContainer.innerHTML = '<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fpalmbeachcountysheriff&tabs=timeline&width='+fbW+'&height='+fbH+'&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=false" style="width:100%;height:100%;border:none;overflow:hidden;" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>';
+
+  // Instagram — embed via snapwidget (free Instagram feed widget)
+  const igContainer = document.getElementById('igEmbedContainer');
+  igContainer.innerHTML = '<iframe src="https://www.instagram.com/pbcountysheriff/embed" style="width:100%;height:100%;border:none;overflow:auto;background:#0d1a0d;" scrolling="yes" frameborder="0" allowfullscreen="true" allow="encrypted-media"></iframe>';
 }
 
 // ============================================================
