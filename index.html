@@ -553,15 +553,15 @@
       <!-- RIGHT COLUMN -->
       <div class="sys-col">
         <div class="sys-panel">
-          <div class="sys-panel-hdr">▸ DISPLAY PREFERENCES</div>
+          <div class="sys-panel-hdr">▸ DISPLAY CONFIGURATION</div>
           <div class="sys-panel-body">
-            <div class="sys-row"><span class="sys-label">SCANLINE EFFECT</span><div class="sys-toggle on" data-toggle="scanline"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">CRT FLICKER</span><div class="sys-toggle" data-toggle="flicker"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">HIGH CONTRAST MODE</span><div class="sys-toggle on" data-toggle="contrast"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">SHOW MAP COORDINATES</span><div class="sys-toggle on" data-toggle="coords"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">INCIDENT TOAST ALERTS</span><div class="sys-toggle on" data-toggle="toasts"><div class="sys-toggle-knob"></div></div></div>
-            <div class="sys-row"><span class="sys-label">THEME</span><select class="sys-select" id="sysTheme"><option value="green">TERMINAL GREEN</option><option value="blue">NIGHT BLUE</option><option value="amber">AMBER CLASSIC</option></select></div>
-            <div class="sys-row"><span class="sys-label">FONT SIZE</span><select class="sys-select" id="sysFontSize"><option value="small">SMALL</option><option value="medium" selected>MEDIUM</option><option value="large">LARGE</option></select></div>
+            <div class="sys-row"><span class="sys-label">DISPLAY MODE</span><span class="sys-value sys-ok">TERMINAL — 1920×1080</span></div>
+            <div class="sys-row"><span class="sys-label">COLOR PROFILE</span><span class="sys-value">P3 PHOSPHOR GREEN</span></div>
+            <div class="sys-row"><span class="sys-label">REFRESH RATE</span><span class="sys-value">60 Hz</span></div>
+            <div class="sys-row"><span class="sys-label">SCANLINE OVERLAY</span><span class="sys-value sys-ok">● ACTIVE</span></div>
+            <div class="sys-row"><span class="sys-label">BRIGHTNESS</span><span class="sys-value">82% <span class="sys-bar"><span class="sys-bar-fill bar-green" style="width:82%"></span></span></span></div>
+            <div class="sys-row"><span class="sys-label">FONT RENDERING</span><span class="sys-value">SUBPIXEL AA — MONO</span></div>
+            <div class="sys-row"><span class="sys-label">UI SCALE</span><span class="sys-value">125%</span></div>
           </div>
         </div>
         <div class="sys-panel">
@@ -1777,89 +1777,16 @@ function loadFbFeed(){
 })();
 
 // ============================================================
-//  SYSTEM — FUNCTIONAL TOGGLES & SESSION
+//  SYSTEM — TOGGLES & SESSION
 // ============================================================
 (function(){
-  const scanlineEl = document.querySelector('.scanline');
-  const bodyEl = document.body;
-
-  // ---- FUNCTIONAL TOGGLE HANDLERS ----
-  const toggleHandlers = {
-    'scanline': function(on){ if(scanlineEl) scanlineEl.style.display = on ? '' : 'none'; },
-    'flicker': function(on){
-      if(on){
-        const style = document.createElement('style');
-        style.id = 'crt-flicker-style';
-        style.textContent = '@keyframes crt-flicker{0%{opacity:1}5%{opacity:0.95}10%{opacity:1}15%{opacity:0.98}100%{opacity:1}} body{animation:crt-flicker 0.15s infinite;}';
-        document.head.appendChild(style);
-      } else {
-        const s = document.getElementById('crt-flicker-style');
-        if(s) s.remove();
-        bodyEl.style.animation = '';
-      }
-    },
-    'contrast': function(on){
-      document.documentElement.style.filter = on ? 'contrast(1.15)' : '';
-    },
-    'coords': function(on){
-      const c = document.getElementById('mapCoords');
-      if(c) c.style.display = on ? '' : 'none';
-    }
-  };
-
+  // Toggle switches (visual only, no functional changes)
   document.querySelectorAll('.sys-toggle').forEach(toggle => {
     toggle.addEventListener('click', function(){
       this.classList.toggle('on');
-      const key = this.dataset.toggle;
-      const isOn = this.classList.contains('on');
-      if(toggleHandlers[key]) toggleHandlers[key](isOn);
     });
   });
-
-  // Init: apply default states
-  document.querySelectorAll('.sys-toggle').forEach(toggle => {
-    const key = toggle.dataset.toggle;
-    const isOn = toggle.classList.contains('on');
-    if(toggleHandlers[key]) toggleHandlers[key](isOn);
-  });
-
-  // ---- THEME SWITCHER ----
-  const themes = {
-    green: { primary:'#00ff88', mid:'#00aa66', dim:'#006644', dark:'#004d2a', darkest:'#003322', bg:'#0a0a0a', panelBg:'#0d1a0d', barBg1:'#1a2a1a', barBg2:'#0d1a0d', border:'#003322', accent:'#00ff88', hue:'0' },
-    blue:  { primary:'#44aaff', mid:'#3388cc', dim:'#336699', dark:'#224466', darkest:'#1a3355', bg:'#080c14', panelBg:'#0d1420', barBg1:'#1a2433', barBg2:'#0d1420', border:'#1a3355', accent:'#44aaff', hue:'210' },
-    amber: { primary:'#ffaa00', mid:'#cc8800', dim:'#996600', dark:'#664400', darkest:'#443300', bg:'#0e0a04', panelBg:'#1a1408', barBg1:'#2a2010', barBg2:'#1a1408', border:'#443300', accent:'#ffaa00', hue:'40' }
-  };
-
-  const themeSelect = document.getElementById('sysTheme');
-  themeSelect.addEventListener('change', function(){
-    const t = themes[this.value];
-    if(!t) return;
-    const r = document.documentElement.style;
-    r.setProperty('--c-primary', t.primary);
-    r.setProperty('--c-mid', t.mid);
-    r.setProperty('--c-dim', t.dim);
-    r.setProperty('--c-dark', t.dark);
-    r.setProperty('--c-darkest', t.darkest);
-    bodyEl.style.background = t.bg;
-    bodyEl.style.color = t.primary;
-    // Apply hue rotation to the whole page for quick theme
-    document.documentElement.style.filter = document.documentElement.style.filter.replace(/hue-rotate\([^)]*\)/,'') + ' hue-rotate('+t.hue+'deg)';
-    // Remove any double spaces
-    document.documentElement.style.filter = document.documentElement.style.filter.replace(/\s+/g,' ').trim();
-    // If green (default), remove hue-rotate
-    if(t.hue === '0'){
-      document.documentElement.style.filter = document.documentElement.style.filter.replace(/hue-rotate\(0deg\)/,'').trim();
-    }
-  });
-
-  // ---- FONT SIZE ----
-  const fontSelect = document.getElementById('sysFontSize');
-  fontSelect.addEventListener('change', function(){
-    const sizes = { small: '1.1', medium: '1.25', large: '1.45' };
-    document.documentElement.style.zoom = sizes[this.value] || '1.25';
-  });
-
-  // ---- SESSION INFO ----
+  // Session login time
   const loginEl = document.getElementById('sysLoginTime');
   const uptimeEl = document.getElementById('sysUptime');
   const loginDate = new Date();
