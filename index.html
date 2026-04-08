@@ -203,12 +203,12 @@
 
 
   /* ============ BODYCAM VIEW ============ */
-  .bodycam-wrap{display:none;height:100%;width:100%;background:#060e0a;overflow:hidden;}
+  .bodycam-wrap{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:100;background:#060e0a;overflow:hidden;}
   .bodycam-wrap.visible{display:flex;flex-direction:column;}
   .bodycam-header{padding:8px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #003322;flex-shrink:0;background:#0d1a0d;}
   .bodycam-header .bc-title{font-size:11px;letter-spacing:2px;color:#00aa66;}
   .bodycam-header .bc-title span{color:#00ff88;}
-  .bodycam-header .bc-meta{font-size:9px;color:#006644;display:flex;gap:14px;}
+  .bodycam-header .bc-meta{font-size:9px;color:#006644;display:flex;align-items:center;gap:14px;}
   .bodycam-header .bc-live{color:#ff4444;display:flex;align-items:center;gap:5px;}
   .bodycam-header .bc-live-dot{width:5px;height:5px;border-radius:50%;background:#ff4444;animation:pulse 1.2s infinite;}
   .bodycam-grid{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;padding:2px;min-height:0;}
@@ -925,81 +925,44 @@
     <div class="map-coords" id="mapCoords">26.7153&deg;N &nbsp; 80.0534&deg;W</div>
   </div>
 
-  <!-- BODYCAM VIEW -->
-  <div class="bodycam-wrap" id="bodycamWrap">
-    <div class="bodycam-header">
-      <div class="bc-title"><span>BODYCAM FEEDS</span> &mdash; LIVE SURVEILLANCE</div>
-      <div class="bc-meta">
-        <div class="bc-live"><span class="bc-live-dot"></span> RECORDING</div>
-        <div>FEEDS: <span style="color:#00ff88;">4 ACTIVE</span></div>
-        <div>STORAGE: <span style="color:#00ff88;">2.4 TB FREE</span></div>
-      </div>
+  </div>
+</div>
+
+<!-- BODYCAM VIEW (fixed overlay) -->
+<div class="bodycam-wrap" id="bodycamWrap">
+  <div class="bodycam-header">
+    <div class="bc-title"><span>BODYCAM FEEDS</span> &mdash; LIVE SURVEILLANCE</div>
+    <div class="bc-meta">
+      <div class="bc-live"><span class="bc-live-dot"></span> RECORDING</div>
+      <div>FEEDS: <span style="color:#00ff88;">4 ACTIVE</span></div>
+      <div>STORAGE: <span style="color:#00ff88;">2.4 TB FREE</span></div>
+      <button id="bodycamClose" style="background:#0a2a1a;border:1px solid #003322;color:#ff4444;padding:4px 14px;font-family:inherit;font-size:10px;letter-spacing:2px;cursor:pointer;border-radius:2px;transition:all 0.2s;margin-left:10px;" onmouseover="this.style.background='#1a0a0a';this.style.borderColor='#ff4444'" onmouseout="this.style.background='#0a2a1a';this.style.borderColor='#003322'">✕ CLOSE</button>
     </div>
-    <div class="bodycam-grid">
-      <!-- CAM 1 -->
-      <div class="bodycam-cell">
-        <video src="https://github.com/tybura/pbso/releases/download/v1.0/1.mp4" autoplay loop muted playsinline></video>
-        <div class="bc-vignette"></div>
-        <div class="bc-overlay-top">
-          <span class="bc-cam-id">CAM-7A // CPL. TYBURA</span>
-          <span class="bc-rec"><span class="bc-rec-dot"></span> REC</span>
-        </div>
-        <div class="bc-overlay-bottom">
-          <div>
-            <div class="bc-location"><span class="bc-pin">▼</span> S DIXIE HWY &amp; SOUTHERN BLVD, WPB</div>
-            <div class="bc-badge">BADGE# JT131069 — UNIT PBSO-7A</div>
-          </div>
-          <span class="bc-timestamp" data-cam="1"></span>
-        </div>
-      </div>
-      <!-- CAM 2 -->
-      <div class="bodycam-cell">
-        <video src="https://github.com/tybura/pbso/releases/download/v1.0/2.mp4" autoplay loop muted playsinline></video>
-        <div class="bc-vignette"></div>
-        <div class="bc-overlay-top">
-          <span class="bc-cam-id">CAM-7B // SGT. MORALES</span>
-          <span class="bc-rec"><span class="bc-rec-dot"></span> REC</span>
-        </div>
-        <div class="bc-overlay-bottom">
-          <div>
-            <div class="bc-location"><span class="bc-pin">▼</span> CLEMATIS ST &amp; FLAGLER DR, WPB</div>
-            <div class="bc-badge">BADGE# JM084522 — UNIT PBSO-7B</div>
-          </div>
-          <span class="bc-timestamp" data-cam="2"></span>
-        </div>
-      </div>
-      <!-- CAM 3 -->
-      <div class="bodycam-cell">
-        <video src="https://github.com/tybura/pbso/releases/download/v1.0/3.mp4" autoplay loop muted playsinline></video>
-        <div class="bc-vignette"></div>
-        <div class="bc-overlay-top">
-          <span class="bc-cam-id">CAM-7C // DEP. RAMIREZ</span>
-          <span class="bc-rec"><span class="bc-rec-dot"></span> REC</span>
-        </div>
-        <div class="bc-overlay-bottom">
-          <div>
-            <div class="bc-location"><span class="bc-pin">▼</span> OKEECHOBEE BLVD &amp; I-95, WPB</div>
-            <div class="bc-badge">BADGE# AR097831 — UNIT PBSO-7C</div>
-          </div>
-          <span class="bc-timestamp" data-cam="3"></span>
-        </div>
-      </div>
-      <!-- CAM 4 -->
-      <div class="bodycam-cell">
-        <video src="https://github.com/tybura/pbso/releases/download/v1.0/4.mp4" autoplay loop muted playsinline></video>
-        <div class="bc-vignette"></div>
-        <div class="bc-overlay-top">
-          <span class="bc-cam-id">CAM-7D // DEP. JACKSON</span>
-          <span class="bc-rec"><span class="bc-rec-dot"></span> REC</span>
-        </div>
-        <div class="bc-overlay-bottom">
-          <div>
-            <div class="bc-location"><span class="bc-pin">▼</span> PGA BLVD &amp; US-1, PALM BCH GARDENS</div>
-            <div class="bc-badge">BADGE# DJ112074 — UNIT PBSO-7D</div>
-          </div>
-          <span class="bc-timestamp" data-cam="4"></span>
-        </div>
-      </div>
+  </div>
+  <div class="bodycam-grid">
+    <div class="bodycam-cell">
+      <video src="https://github.com/tybura/pbso/releases/download/v1.0/1.mp4" autoplay loop muted playsinline></video>
+      <div class="bc-vignette"></div>
+      <div class="bc-overlay-top"><span class="bc-cam-id">CAM-7A // CPL. TYBURA</span><span class="bc-rec"><span class="bc-rec-dot"></span> REC</span></div>
+      <div class="bc-overlay-bottom"><div><div class="bc-location"><span class="bc-pin">▼</span> S DIXIE HWY &amp; SOUTHERN BLVD, WPB</div><div class="bc-badge">BADGE# JT131069 — UNIT PBSO-7A</div></div><span class="bc-timestamp" data-cam="1"></span></div>
+    </div>
+    <div class="bodycam-cell">
+      <video src="https://github.com/tybura/pbso/releases/download/v1.0/2.mp4" autoplay loop muted playsinline></video>
+      <div class="bc-vignette"></div>
+      <div class="bc-overlay-top"><span class="bc-cam-id">CAM-7B // SGT. MORALES</span><span class="bc-rec"><span class="bc-rec-dot"></span> REC</span></div>
+      <div class="bc-overlay-bottom"><div><div class="bc-location"><span class="bc-pin">▼</span> CLEMATIS ST &amp; FLAGLER DR, WPB</div><div class="bc-badge">BADGE# JM084522 — UNIT PBSO-7B</div></div><span class="bc-timestamp" data-cam="2"></span></div>
+    </div>
+    <div class="bodycam-cell">
+      <video src="https://github.com/tybura/pbso/releases/download/v1.0/3.mp4" autoplay loop muted playsinline></video>
+      <div class="bc-vignette"></div>
+      <div class="bc-overlay-top"><span class="bc-cam-id">CAM-7C // DEP. RAMIREZ</span><span class="bc-rec"><span class="bc-rec-dot"></span> REC</span></div>
+      <div class="bc-overlay-bottom"><div><div class="bc-location"><span class="bc-pin">▼</span> OKEECHOBEE BLVD &amp; I-95, WPB</div><div class="bc-badge">BADGE# AR097831 — UNIT PBSO-7C</div></div><span class="bc-timestamp" data-cam="3"></span></div>
+    </div>
+    <div class="bodycam-cell">
+      <video src="https://github.com/tybura/pbso/releases/download/v1.0/4.mp4" autoplay loop muted playsinline></video>
+      <div class="bc-vignette"></div>
+      <div class="bc-overlay-top"><span class="bc-cam-id">CAM-7D // DEP. JACKSON</span><span class="bc-rec"><span class="bc-rec-dot"></span> REC</span></div>
+      <div class="bc-overlay-bottom"><div><div class="bc-location"><span class="bc-pin">▼</span> PGA BLVD &amp; US-1, PALM BCH GARDENS</div><div class="bc-badge">BADGE# DJ112074 — UNIT PBSO-7D</div></div><span class="bc-timestamp" data-cam="4"></span></div>
     </div>
   </div>
 </div>
@@ -1727,6 +1690,12 @@ selectRecord(0);
 
   // City cam close button — return to RECORDS tab
   document.getElementById('citycamClose').addEventListener('click', function(){
+    const recordsTab = tabs[0];
+    if(recordsTab) recordsTab.click();
+  });
+
+  // Bodycam close button — return to RECORDS tab
+  document.getElementById('bodycamClose').addEventListener('click', function(){
     const recordsTab = tabs[0];
     if(recordsTab) recordsTab.click();
   });
